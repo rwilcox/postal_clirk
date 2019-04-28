@@ -1,0 +1,19 @@
+{
+  "name": "postal_clirk",
+  "version": "0.0.1",
+  "description": "Run individual Postman requests. Just do not get too clever.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ryan Wilcox <rwilcox@wilcoxd.com>",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "handlebars": "^4.1.2",
+    "lodash": "^4.17.11",
+    "postman-collection": "^3.4.7",
+    "winston": "^3.2.1",
+    "yargs": "^13.2.2"
+  }
+}
