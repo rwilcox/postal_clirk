@@ -34,10 +34,14 @@ function setupYargs( yargs ) {
     cmdYargs.describe('f', 'the exported Postman collection to act upon')
     .alias('f', 'file')
     .nargs('f', 1)
+    .describe('e', 'set variable value')
+    .alias('e', 'environment')
+    .array('e')
     .positional('postmanRequestPath', {describe: "The name of the postman request to run. (Get me from the list command!)", type: "string"})
     .demandOption(['f'])
     .usage("$0 run -f file <postmanRequestPath>")
     .example('$0 run -f postman_collection.postman_collection.json echoRequest')
+    .example('$0 run echoRequest -f collection.postman_collection.json -e \"SERVER_URL=http://www.example.com\" -e \"USERNAME=rwilcox\" ')
   }, async function thunk(parsedArgs) {
     try {
       await handleRunCommand(parsedArgs)
@@ -58,7 +62,7 @@ function setupYargs( yargs ) {
 function handleListCommand(parsedArgs) {
   logger.info(`parsing collection at ${parsedArgs.file}`)
   logger.info("========================================\n")
-  let requests = parseCollection(parsedArgs.file)
+  let requests = parseCollectionFile(parsedArgs.file)
 
   let requestsByPath = _.groupBy(requests, currentRequest => {
      let currentPath =_.dropRight(currentRequest.path.split("/"), 1).join("/")
@@ -76,7 +80,7 @@ function handleListCommand(parsedArgs) {
 
 
 async function handleRunCommand(parsedArgs) {
-  let requests = parseCollection(parsedArgs.file)
+  let requests = parseCollectionFile(parsedArgs.file)
 
   let requestedRequest = _.find(requests, request => {
     logger.debug(`testing ${request.path}`)
@@ -88,7 +92,10 @@ async function handleRunCommand(parsedArgs) {
     return
   }
 
-  callRequest(requestedRequest)
+  callRequest(
+    requestedRequest, 
+    environmentStringsToRecord(parsedArgs.environment)
+  )
 //  console.dir(requestedRequest)
 }
 
@@ -114,10 +121,14 @@ function setupLogger(showLevel="debug") {
 }
 
 
-function parseCollection(filename) {
+function parseCollectionFile(filename) {
   // Load a collection to memory from a JSON file on disk 
-  myCollection = new Collection(JSON.parse(
-    fs.readFileSync(filename).toString()));
+ return parseCollection( JSON.parse(fs.readFileSync(filename).toString()) )
+}
+
+
+function parseCollection(jsonStr) {
+  myCollection = new Collection(jsonStr)
 
   myCollection.items.each(function (item) {
     // Check if this is a request at the top level
@@ -144,7 +155,7 @@ function parseCollection(filename) {
 }
 
 
-function dfs (item, requests, namespace) { // fn -> Depth first search
+function dfs(item, requests, namespace) { // fn -> Depth first search
     // Check if this is a request
     if (Item.isItem(item)) {
       if (item.request && Request.isRequest(item.request)) {
@@ -168,14 +179,25 @@ function dfs (item, requests, namespace) { // fn -> Depth first search
     }
 
     return requests;
-  };
+};
 
-  async function callRequest(foundRequest) {
+
+function environmentStringsToRecord(environmentStrings) {
+  let record = {}
+  _.each(environmentStrings, currentEnvironment => {
+    let [key, value] = currentEnvironment.split("=")
+    record[key] = value
+  })
+
+  logger.debug("parsed environment strings = %o", record)
+  return record
+}
+
+
+async function callRequest(foundRequest, postmanVariables) {
     let request = foundRequest.request
   
     // console.dir(request.url)
-    var postmanVariables = {ECHO_SERVER: "https://812dfb8c-678a-43b5-85b5-dc68a169a8f2.mock.pstmn.io/"}
-  
     var requestURL = `${request.url.host}${request.url.path}` // TODO: build this better, we have query params here, at least
   
     logger.debug(`requestURL is ${requestURL}`)
@@ -221,27 +243,8 @@ function dfs (item, requests, namespace) { // fn -> Depth first search
     return response
 }
 
+module.exports = { callRequest, parseCollection, parseCollectionFile }
 
 if (require.main === module) {
   setupYargs( require('yargs') )
 } 
-
-//logger.info("CYA LATER!")
-//process.exit(0)
-
-///////////////////////// ===================================================================
-// Workspace / garbage
-
-// Serialize each PostmanRequest to it's JSON representation
-/*
-requests = _.map(requests, (r) => { return r.toJSON(); })
-
-var desiredName = "echo"
-var foundRequest = _.find(requests, (postmanRequest) => postmanRequest.name == desiredName)
-
-console.dir(foundRequest)
-console.log(argv.command)
-
-callRequest(foundRequest)
-
-*/
