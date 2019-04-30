@@ -198,7 +198,8 @@ async function callRequest(foundRequest, postmanVariables) {
     let request = foundRequest.request
   
     // console.dir(request.url)
-    var requestURL = `${request.url.host}${request.url.path}` // TODO: build this better, we have query params here, at least
+    var requestPath = request.url.path.join("/")
+    var requestURL = `${request.url.host}${requestPath}` // TODO: build this better, we have query params here, at least
   
     logger.debug(`requestURL is ${requestURL}`)
     var urlFunctor = handlebars.compile( requestURL, {strict: true} )
@@ -207,12 +208,14 @@ async function callRequest(foundRequest, postmanVariables) {
     logger.debug(request.method); // The HTTP Verb of your request Eg. GET, POST
   
     var requestHeaders = {}
-    _.each(request.header, (header) => {
-      var headerValue = handlebars.compile(header.value)(postmanVariables)
+    _.each(request.headers.all(), (header) => {
+      var headerValue = handlebars.compile(header.value, {strict: true})(postmanVariables)
       logger.debug(header.key, headerValue); // Eg. key -> 'Content-Type', value -> 'application/json'
       requestHeaders[ header.key ] = headerValue
     });
-  
+    // logger.debug("headers from Postman: %o", request.headers.all())
+    logger.debug("processed headers: %o", requestHeaders)
+
     var requestBody = request.body[ request.body.mode ]
     
     logger.debug(requestBody)
@@ -235,8 +238,17 @@ async function callRequest(foundRequest, postmanVariables) {
     logger.debug("requestOptions: %o ", requestOptions)
     logger.debug("===============================")
 
-    let response = await axios(requestOptions)
-    
+    let response
+    try {
+      response = await axios(requestOptions)
+    } catch(error) {
+        logger.debug("Request failed")
+        logger.debug("Status: %d", error.response.status)
+        logger.debug("Body: %o", error.response.data)
+
+        throw error
+    }
+
     logger.debug(`response status code was ${response.status}`)
     logger.info("%o", response.data)
 
