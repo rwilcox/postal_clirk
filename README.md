@@ -28,6 +28,8 @@ Enter Postal Clirk
 
 Postal Clirk executes simple Postman requests on the command line.
 
+It also can be used as a Node library, allowing you to execute Postman requests in scripts of your own.
+
 Features
 ------------------------------
 
@@ -42,3 +44,25 @@ Limitations
 You can do LOTS of things with Postman, including creating pre and post scripts. Postal Clirk does not implement all of the Postman runtime, so your more complex commands may fail.
 
 Postal Clirk is (now) very much a 80/20 utility.
+
+Using Postal Clirk (CLI)
+================================
+
+Basic Usage
+--------------------------------
+
+
+
+Enhanged Logging
+-------------------------------
+
+
+And SSL issues (like self signed certs)
+---------------------------------
+
+    $ NODE_TLS_REJECT_UNAUTHORIZED=0 postal_clirk run someCommand -f the_postman_collection.postman_collection.json 
+
+
+Using Postal Clirk (library)
+==============================
+
