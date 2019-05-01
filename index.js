@@ -79,13 +79,18 @@ function handleListCommand(parsedArgs) {
 }
 
 
+function findRequest(parsedCollectionOfRequests, requestPath) {
+  return _.find(parsedCollectionOfRequests, request => {
+    logger.debug(`testing ${request.path}`)
+    return request.path == requestPath
+  })
+}
+
+
 async function handleRunCommand(parsedArgs) {
   let requests = parseCollectionFile(parsedArgs.file)
 
-  let requestedRequest = _.find(requests, request => {
-    logger.debug(`testing ${request.path}`)
-    return request.path == parsedArgs.postmanRequestPath
-  })
+  requestedRequest = findRequest(requests, parsedArgs.postmanRequestPath)
 
   if ( _.isNil(requestedRequest) ) {
     logger.error(`Could not find request ${parsedArgs.postmanRequestPath} in collection`)
@@ -220,7 +225,7 @@ async function callRequest(foundRequest, postmanVariables) {
     
     logger.debug(requestBody)
     var requestBody = handlebars.compile(requestBody, {strict: true})(postmanVariables)
-    logger.debug("requestBody after getting compiled by handlebars", requestBody)
+    logger.debug("requestBody after getting compiled by handlebars %o", requestBody)
     // You can also access the request body and the auth, certificate and proxy used by the request
     // Your PostmanRequest description is also available
   
@@ -243,6 +248,7 @@ async function callRequest(foundRequest, postmanVariables) {
       response = await axios(requestOptions)
     } catch(error) {
         logger.debug("Request failed")
+        logger.debug( error.toString() )
         logger.debug("Status: %d", error.response.status)
         logger.debug("Body: %o", error.response.data)
 
@@ -255,7 +261,7 @@ async function callRequest(foundRequest, postmanVariables) {
     return response
 }
 
-module.exports = { callRequest, parseCollection, parseCollectionFile }
+module.exports = { callRequest, parseCollection, parseCollectionFile, findRequest }
 
 if (require.main === module) {
   setupYargs( require('yargs') )
