@@ -15,5 +15,15 @@
     "postman-collection": "^3.4.7",
     "winston": "^3.2.1",
     "yargs": "^13.2.2"
-  }
+  },
+  "keywords": ["postman"],
+  "repository": {
+      "type": "git",
+      "url": "https://github.com/rwilcox/postal_clirk.git"
+  },
+  "homepage": "https://github.com/rwilcox/postal_clirk",
+  "bin": "./index.js",
+  "files": [
+    "README.md"
+  ]
 }
