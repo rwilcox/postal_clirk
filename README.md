@@ -51,11 +51,30 @@ Using Postal Clirk (CLI)
 Basic Usage
 --------------------------------
 
+`postal_clirk` is well documented. Use the help options to see more.
 
+However, when opening a Postman collection you'll first want to see the requests and paths defined for you:
+
+    $ postal_clirk list -f postal_clirk_testing.postman_collection.json
+    parsing collection at postal_clirk_testing.postman_collection.json
+    ========================================
+
+    /The test folder/
+    full path: "/The test folder/subitem_echo". Name: "subitem_echo"
+    /
+    full path: "/echo". Name: "echo"
+
+
+Now, find the request you want to run and do this:
+
+    $ postal_clirk run "/echo" -f postal_clirk_testing.postman_collection.json -e "A_POSTMAN_VARIABLE=http://example.com"
+
+(You set Postman variables with the `-e` option).
 
 Enhanged Logging
 -------------------------------
 
+    $ LOGGING_LEVEL=debug postal_clirk run someCommand -f the_postman_collection.postman_collection.json
 
 And SSL issues (like self signed certs)
 ---------------------------------
@@ -66,3 +85,8 @@ And SSL issues (like self signed certs)
 Using Postal Clirk (library)
 ==============================
 
+The main functions of the `postal_clirk` library are as follows:
+
+  * `parseCollection(jsonObject)` / `parseCollectionFile(collectionFilePath)` <-- first open up the file.
+  * `findRequest(parseCollectionResult, requestPath)` <-- find the requested request object in the collection
+  * `callRequest(theFoundRequest, objectWhereTheKeysAreThePostmanVariablesAndValuesAreWhatToSetItTo)` <-- executes the Postman request
