@@ -45,6 +45,12 @@ You can do LOTS of things with Postman, including creating pre and post scripts.
 
 Postal Clirk is (now) very much a 80/20 utility.
 
+Installation
+===============================
+
+    $ npm install -g postal_clirk
+
+
 Using Postal Clirk (CLI)
 ================================
 
