@@ -199,50 +199,57 @@ function environmentStringsToRecord(environmentStrings) {
 }
 
 
+function postmanRequestToAxiosRequest(foundRequest, postmanVariables) {
+  let request = foundRequest.request
+  
+  // console.dir(request.url)
+  var requestPath = request.url.path.join("/")
+  var requestURL = `${request.url.host}${requestPath}` // TODO: build this better, we have query params here, at least
+
+  logger.debug(`requestURL is ${requestURL}`)
+  var urlFunctor = handlebars.compile( requestURL, {strict: true} )
+  var theURL = urlFunctor(postmanVariables)
+
+  logger.debug(request.method); // The HTTP Verb of your request Eg. GET, POST
+
+  var requestHeaders = {}
+  _.each(request.headers.all(), (header) => {
+    var headerValue = handlebars.compile(header.value, {strict: true})(postmanVariables)
+    logger.debug(header.key, headerValue); // Eg. key -> 'Content-Type', value -> 'application/json'
+    requestHeaders[ header.key ] = headerValue
+  });
+  // logger.debug("headers from Postman: %o", request.headers.all())
+  logger.debug("processed headers: %o", requestHeaders)
+
+  var requestBody = request.body[ request.body.mode ]
+  
+  logger.debug(requestBody)
+  var requestBody = handlebars.compile(requestBody, {strict: true})(postmanVariables)
+  logger.debug("requestBody after getting compiled by handlebars %o", requestBody)
+  // You can also access the request body and the auth, certificate and proxy used by the request
+  // Your PostmanRequest description is also available
+
+  let requestOptions = {
+    url: theURL,
+    method: request.method,
+    headers: requestHeaders,
+  }
+
+  if ( ['POST', 'PUT', 'PATCH'].indexOf(request.method) > -1 ) {
+    requestOptions.data = requestBody
+  }
+
+  logger.debug("===============================")
+  logger.debug("requestOptions: %o ", requestOptions)
+  logger.debug("===============================")
+
+  return requestOptions
+}
+
+
 async function callRequest(foundRequest, postmanVariables) {
-    let request = foundRequest.request
-  
-    // console.dir(request.url)
-    var requestPath = request.url.path.join("/")
-    var requestURL = `${request.url.host}${requestPath}` // TODO: build this better, we have query params here, at least
-  
-    logger.debug(`requestURL is ${requestURL}`)
-    var urlFunctor = handlebars.compile( requestURL, {strict: true} )
-    var theURL = urlFunctor(postmanVariables)
-  
-    logger.debug(request.method); // The HTTP Verb of your request Eg. GET, POST
-  
-    var requestHeaders = {}
-    _.each(request.headers.all(), (header) => {
-      var headerValue = handlebars.compile(header.value, {strict: true})(postmanVariables)
-      logger.debug(header.key, headerValue); // Eg. key -> 'Content-Type', value -> 'application/json'
-      requestHeaders[ header.key ] = headerValue
-    });
-    // logger.debug("headers from Postman: %o", request.headers.all())
-    logger.debug("processed headers: %o", requestHeaders)
 
-    var requestBody = request.body[ request.body.mode ]
-    
-    logger.debug(requestBody)
-    var requestBody = handlebars.compile(requestBody, {strict: true})(postmanVariables)
-    logger.debug("requestBody after getting compiled by handlebars %o", requestBody)
-    // You can also access the request body and the auth, certificate and proxy used by the request
-    // Your PostmanRequest description is also available
-  
-    let requestOptions = {
-      url: theURL,
-      method: request.method,
-      headers: requestHeaders,
-    }
-  
-    if ( ['POST', 'PUT', 'PATCH'].indexOf(request.method) > -1 ) {
-      requestOptions.data = requestBody
-    }
-  
-    logger.debug("===============================")
-    logger.debug("requestOptions: %o ", requestOptions)
-    logger.debug("===============================")
-
+    let requestOptions = postmanRequestToAxiosRequest(foundRequest, postmanVariables)
     let response
     try {
       response = await axios(requestOptions)
@@ -261,7 +268,8 @@ async function callRequest(foundRequest, postmanVariables) {
     return response
 }
 
-module.exports = { callRequest, parseCollection, parseCollectionFile, findRequest }
+
+module.exports = { callRequest, parseCollection, parseCollectionFile, findRequest, postmanRequestToAxiosRequest }
 
 if (require.main === module) {
   setupYargs( require('yargs') )
