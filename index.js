@@ -256,9 +256,10 @@ async function callRequest(foundRequest, postmanVariables) {
     } catch(error) {
         logger.debug("Request failed")
         logger.debug( error.toString() )
-        logger.debug("Status: %d", error.response.status)
-        logger.debug("Body: %o", error.response.data)
-
+        if (error.response) {
+          logger.debug("Status: %d", error.response.status)
+          logger.debug("Body: %o", error.response.data)
+        }
         throw error
     }
 
