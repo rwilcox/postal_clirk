@@ -3,6 +3,7 @@ PROFILE ?= wdstatic
 AWS_STREAM_NAME ?= /aws/codebuild/postal-clirk
 
 release:
+	node build-scripts/check-for-currently-published.js
 	npm publish
 
 
