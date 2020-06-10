@@ -5,6 +5,8 @@ AWS_STREAM_NAME ?= /aws/codebuild/postal-clirk
 release:
 	node build-scripts/check-for-currently-published.js
 	npm publish
+	VERSION_TAG=$$(cat package.json | jq -M ".version" | tr -d '\"'); \
+	git tag -m "$$VERSION_TAG" v$$VERSION_TAG
 
 
 build:
