@@ -97,3 +97,9 @@ The main functions of the `postal_clirk` library are as follows:
   * `findRequest(parseCollectionResult, requestPath)` <-- find the requested request object in the collection
   * `callRequest(theFoundRequest, objectWhereTheKeysAreThePostmanVariablesAndValuesAreWhatToSetItTo)` <-- executes the Postman request
   * `postmanRequestToAxiosRequest`<-- returns you an object you can give to axios. For example, if you want to add something to the axios config, like proxy configuration, get the request via this method and call `axios(theResult)` yourself.
+
+Badges
+================================
+
+![build status](
+https://codebuild.us-east-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiM2hYSE1RZ3BWMVpiUC80aXR1V0lGUUpvYmhtc3ZUY2tjS3VTY2JCV3NDRzRNL09iMzZlaEwvVm14Q2dLSGlJNDR4MHMxL2s4MmoxMSswWjY0R3dPMmU0PSIsIml2UGFyYW1ldGVyU3BlYyI6IllkZ1ltajJIWTQwWk9BRW8iLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
