@@ -9,17 +9,19 @@
   "author": "Ryan Wilcox <rwilcox@wilcoxd.com>",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.19.2",
     "handlebars": "^4.1.2",
     "lodash": "^4.17.11",
     "postman-collection": "^3.4.7",
     "winston": "^3.2.1",
     "yargs": "^13.2.2"
   },
-  "keywords": ["postman"],
+  "keywords": [
+    "postman"
+  ],
   "repository": {
-      "type": "git",
-      "url": "https://github.com/rwilcox/postal_clirk.git"
+    "type": "git",
+    "url": "https://github.com/rwilcox/postal_clirk.git"
   },
   "homepage": "https://github.com/rwilcox/postal_clirk",
   "bin": "./index.js",
