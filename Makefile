@@ -26,9 +26,14 @@ latest_build_results:
 	echo $$BUILD_LOG_STREAM; \
 	aws logs get-log-events --log-group-name="${AWS_STREAM_NAME}" --log-stream-name=$$BUILD_LOG_STREAM --profile=${PROFILE} | jq -M ".events[] | .message" | tr -d '\"'
 
+test:
+	bash tests/integration/tests.sh
+	npm test
+
 
 help:
 	$(info make release               - publish to NPM)
 	$(info make build                 - build the source)
 	$(info make force_build           - for the current checked out Git branch, build remote HEAD)
 	$(info make latest_build_results  - for the latest CodeBuild build, show results on CLI)
+	$(info make test                  - run tests)
