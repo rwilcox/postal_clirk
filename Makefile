@@ -28,7 +28,7 @@ latest_build_results:
 
 test:
 	bash tests/integration/tests.sh
-	npm test
+	#npm test
 
 
 help:
