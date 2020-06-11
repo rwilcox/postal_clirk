@@ -18,12 +18,12 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{ECHO_SERVER}}/echo2",
+							"raw": "{{ECHO_SERVER}}/get",
 							"host": [
 								"{{ECHO_SERVER}}"
 							],
 							"path": [
-								"echo2"
+								"get"
 							]
 						}
 					},
