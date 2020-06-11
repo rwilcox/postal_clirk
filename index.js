@@ -97,10 +97,23 @@ async function handleRunCommand(parsedArgs) {
     return
   }
 
-  callRequest(
-    requestedRequest, 
-    environmentStringsToRecord(parsedArgs.environment)
-  )
+  try {
+    await callRequest(
+      requestedRequest, 
+      environmentStringsToRecord(parsedArgs.environment)
+    )
+  } catch (e) {
+    logger.debug(e)
+
+    if (e.response) {  // is it an axios error?
+      logger.error("%o", e.response.data)
+    }
+
+    // we have displayed information about the error to the user further down the chain
+    // (but always show them the result)
+
+    process.exit(1)
+  }
 //  console.dir(requestedRequest)
 }
 
@@ -255,7 +268,6 @@ async function callRequest(foundRequest, postmanVariables) {
       response = await axios(requestOptions)
     } catch(error) {
         logger.debug("Request failed")
-        logger.debug( error.toString() )
         if (error.response) {
           logger.debug("Status: %d", error.response.status)
           logger.debug("Body: %o", error.response.data)
