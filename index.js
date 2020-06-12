@@ -50,6 +50,7 @@ function setupYargs( yargs ) {
       await handleRunCommand(parsedArgs)
    } catch(err) {
      logger.error(`Error happened! ${err}`)
+     logger.debug(err.stack)
      process.exit(1)
    } } )
   .demandCommand(1, 'You need at least one command before moving on')
@@ -92,7 +93,8 @@ function findRequest(parsedCollectionOfRequests, requestPath) {
 
 
 async function handleRunCommand(parsedArgs) {
-  let requests = parseCollectionFile(parsedArgs.file)
+  let collection = parseCollectionFileToObject(parsedArgs.file)
+  let requests = collection.requests
 
   requestedRequest = findRequest(requests, parsedArgs.postmanRequestPath)
 
@@ -101,11 +103,13 @@ async function handleRunCommand(parsedArgs) {
     return
   }
 
+  let definedVariables = postmanVariablesToRecord(collection.variables)
+  let variables = Object.assign( definedVariables, environmentStringsToRecord(parsedArgs.environment) )
+
+  logger.debug("variables, overloaded or not = %o", variables)
+
   try {
-    await callRequest(
-      requestedRequest, 
-      environmentStringsToRecord(parsedArgs.environment)
-    )
+    await callRequest(requestedRequest, variables)
   } catch (e) {
     logger.debug(e)
 
@@ -146,6 +150,23 @@ function setupLogger(showLevel="debug") {
 function parseCollectionFile(filename) {
   // Load a collection to memory from a JSON file on disk 
  return parseCollection( JSON.parse(fs.readFileSync(filename).toString()) )
+}
+
+
+function parseCollectionFileToObject(filename) {
+  let output = {}
+  let parsedObject = JSON.parse(fs.readFileSync(filename).toString() )
+
+  output.requests = parseCollection( parsedObject )
+  output.variables = parseCollectionForVariables(parsedObject)
+
+  return output
+}
+
+
+function parseCollectionForVariables(jsonStr) {
+  myCollection = new Collection(jsonStr)
+  return myCollection.variables
 }
 
 
@@ -213,6 +234,17 @@ function environmentStringsToRecord(environmentStrings) {
 
   logger.debug("parsed environment strings = %o", record)
   return record
+}
+
+
+function postmanVariablesToRecord(postmanVariables) {
+  let output = {}
+  let vars = ( postmanVariables ? postmanVariables : [] )
+  vars.each(element => {
+    output[element.key] = element.value
+  })
+  
+  return output
 }
 
 

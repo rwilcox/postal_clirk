@@ -15,3 +15,4 @@
   * now sets non-zero exit code if Postman request fails
   * if possible, even in error conditions, the CLI will display the response body to the user
   * now with 100% more unit test coverage, in CLI mode (aka: now we have some)
+  * better error messaging if no definition for a required variable found
