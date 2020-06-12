@@ -28,6 +28,27 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "subitem_var",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{DA_SERVER}}/get",
+							"host": [
+								"{{DA_SERVER}}"
+							],
+							"path": [
+								"get"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
