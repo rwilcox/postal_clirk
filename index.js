@@ -8,6 +8,8 @@ const handlebars = require('handlebars')
 const axios = require('axios')
 const winston = require('winston')
 const _ = require('lodash')
+const util = require('util')
+
 const logger = setupLogger( _.defaultTo(process.env.LOGGING_LEVEL, "info") )
 
 var fs = require('fs'), // needed to read JSON file from disk
@@ -19,6 +21,7 @@ ItemGroup = sdk.ItemGroup,
 myCollection,
 requests = []
 
+class VariableException extends Error { }
 
 function setupYargs( yargs ) {
   return yargs.usage('Usage: $0 <command> [options]')
@@ -262,8 +265,16 @@ function postmanRequestToAxiosRequest(foundRequest, postmanVariables) {
 
 
 async function callRequest(foundRequest, postmanVariables) {
+    let requestOptions  
+    try {
+      requestOptions = postmanRequestToAxiosRequest(foundRequest, postmanVariables)
+    } catch(e) {
+      let substrEnds = e.message.indexOf('not defined in')
 
-    let requestOptions = postmanRequestToAxiosRequest(foundRequest, postmanVariables)
+      if ( substrEnds > -1 ) {
+        throw new VariableException(`postman variable ${e.message.substring(0, substrEnds -1)} not found in given variable definitions: ${util.inspect(postmanVariables)}`)
+      }
+    }
     let response
     try {
       response = await axios(requestOptions)
