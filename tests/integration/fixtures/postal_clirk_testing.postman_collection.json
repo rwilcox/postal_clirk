@@ -140,7 +140,7 @@
 		{
 			"id": "b67cd984-9b41-43e5-8ae6-f34fa3ca41a6",
 			"key": "ECHO_SERVER",
-			"value": "https://812dfb8c-678a-43b5-85b5-dc68a169a8f2.mock.pstmn.io",
+			"value": "https://812dfb8c-678a-43b5-85b5-dc68a169a8f2.mock.pstmn.io/",
 			"type": "string"
 		}
 	]
