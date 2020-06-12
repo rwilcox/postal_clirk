@@ -47,6 +47,7 @@ function setupYargs( yargs ) {
       await handleRunCommand(parsedArgs)
    } catch(err) {
      logger.error(`Error happened! ${err}`)
+     process.exit(1)
    } } )
   .demandCommand(1, 'You need at least one command before moving on')
   .example('$0 run --help')
@@ -112,7 +113,7 @@ async function handleRunCommand(parsedArgs) {
     // we have displayed information about the error to the user further down the chain
     // (but always show them the result)
 
-    process.exit(1)
+    throw e
   }
 //  console.dir(requestedRequest)
 }
