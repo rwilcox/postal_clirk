@@ -10,6 +10,7 @@ release:
 
 
 build:
+	npm run jsdocs -- -d docs src/main -R README.md
 	npm build
 
 

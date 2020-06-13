@@ -27,5 +27,8 @@
   "bin": "./index.js",
   "files": [
     "README.md"
-  ]
+  ],
+  "devDependencies": {
+    "jsdoc": "^3.6.4"
+  }
 }
