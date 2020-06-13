@@ -12,6 +12,23 @@ const util = require('util')
 
 const logger = setupLogger( _.defaultTo(process.env.LOGGING_LEVEL, "info") )
 
+/**
+ * @typedef PostmanRequest
+ * @property {string} path - path in the Postman collection hierarchy
+ * @property {string} name - name of the Postman request
+ */
+
+/**
+ * @typedef PostmanVariables
+ * @property {string} key - name of the postman variable
+ * @property {string} value - value of the postman variable
+ */
+
+/**
+ * @typedef PostmanParsedFileObject
+ * @property {PostmanRequest[]} requests - requests from the Postman collection
+ * @property {PostmanVariables[]} variables - variables set and used by the Postman collection
+ */
 var fs = require('fs'), // needed to read JSON file from disk
 sdk = require('postman-collection'),
 Collection = sdk.Collection,
@@ -84,6 +101,12 @@ function handleListCommand(parsedArgs) {
 }
 
 
+/**
+ * Given the string path version of the request location, find the Postman request associated
+ * 
+ * @param {PostmanRequest[]} parsedCollectionOfRequests - requests in the file
+ * @param {*} requestPath - string path location
+ */
 function findRequest(parsedCollectionOfRequests, requestPath) {
   return _.find(parsedCollectionOfRequests, request => {
     logger.debug(`testing ${request.path}`)
@@ -146,13 +169,22 @@ function setupLogger(showLevel="debug") {
     ] } )
 }
 
-
+/**
+ * Given a path to a Postman collection, return its requests
+ * @param {string} filename 
+ * @result {PostmanRequest[]} array of requests in the exported Postman collection
+ */
 function parseCollectionFile(filename) {
   // Load a collection to memory from a JSON file on disk 
  return parseCollection( JSON.parse(fs.readFileSync(filename).toString()) )
 }
 
 
+/**
+ * Given a path to a Postman collection, return gathered information
+ * @param {string} filename path to the exported Postman collection
+ * @returns {PostmanParsedFileObject} parsed file object
+ */
 function parseCollectionFileToObject(filename) {
   let output = {}
   let parsedObject = JSON.parse(fs.readFileSync(filename).toString() )
@@ -163,13 +195,21 @@ function parseCollectionFileToObject(filename) {
   return output
 }
 
-
+/**
+ * Given a path to a Postman collection, return its variables
+ * @param {string} filename Path to the exported Postman collection
+ * @returns {PostmanVariables[]} postman variables
+ */
 function parseCollectionForVariables(jsonStr) {
   myCollection = new Collection(jsonStr)
   return myCollection.variables
 }
 
-
+/**
+ * From a JSON string, parse it as a Postman collection
+ * @param {string} jsonStr - string containing JSON
+ * @result {PostmanRequest[]} an array of the results found, regardless of where in the Postman hierarchy they were created.
+ */
 function parseCollection(jsonStr) {
   myCollection = new Collection(jsonStr)
 
@@ -237,6 +277,11 @@ function environmentStringsToRecord(environmentStrings) {
 }
 
 
+/**
+ * Transform an array of PostmanVariables into a Plain Ol' Javascript Object
+ * @param {PostmanVariables[]} postmanVariables given PostmanVariables, translate them into a {k: v} object
+ * @result {object} array of PostmanVariables now transformed to seperate keys in a single object
+ */
 function postmanVariablesToRecord(postmanVariables) {
   let output = {}
   let vars = ( postmanVariables ? postmanVariables : [] )
@@ -247,7 +292,13 @@ function postmanVariablesToRecord(postmanVariables) {
   return output
 }
 
-
+/**
+ * For a given Postman request, return objects we can pass to axios
+ * @param {PostmanRequest} foundRequest Postman request to process
+ * @param {object} postmanVariables - k, v of Postman variable name and values
+ * 
+ * @return {object} parameters you should pass to Axios
+ */
 function postmanRequestToAxiosRequest(foundRequest, postmanVariables) {
   let request = foundRequest.request
   
@@ -295,7 +346,12 @@ function postmanRequestToAxiosRequest(foundRequest, postmanVariables) {
   return requestOptions
 }
 
-
+/**
+ * Call the Postman request at the given path, using the given variables
+ * @param {string} foundRequest path to the Postman request in the exported Postman file
+ * @param {object} postmanVariables k,v dictionary that holds values for every Postman variable used in this request
+ * @result {object} axios result
+ */
 async function callRequest(foundRequest, postmanVariables) {
     let requestOptions  
     try {
@@ -326,7 +382,11 @@ async function callRequest(foundRequest, postmanVariables) {
 }
 
 
-module.exports = { callRequest, parseCollection, parseCollectionFile, findRequest, postmanRequestToAxiosRequest }
+module.exports = { callRequest, parseCollection, 
+  parseCollectionFile, parseCollectionFileToObject, 
+  parseCollectionForVariables, 
+  findRequest, postmanRequestToAxiosRequest, postmanVariablesToRecord
+}
 
 if (require.main === module) {
   setupYargs( require('yargs') )

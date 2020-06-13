@@ -33,7 +33,7 @@ latest_build_results:
 	aws logs get-log-events --log-group-name="${AWS_STREAM_NAME}" --log-stream-name=$$BUILD_LOG_STREAM --profile=${PROFILE} | jq -M ".events[] | .message" | tr -d '\"'
 
 test:
-	bash tests/integration/tests.sh
+	bash src/tests/integration/tests.sh
 	#npm test
 
 
