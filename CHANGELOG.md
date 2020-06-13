@@ -17,3 +17,4 @@
   * now with 100% more unit test coverage, in CLI mode (aka: now we have some)
   * better error messaging if no definition for a required variable found
   * will read Postman defined variables. Variables written on the command line will override these variables
+  * added JSDocs
