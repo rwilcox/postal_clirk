@@ -52,3 +52,5 @@ help:
 	$(info make latest_build_status   - checking up on the latest build)
 	$(info make latest_build_results  - for the latest CodeBuild build, show results on CLI)
 	$(info make test                  - run tests)
+	$(info make docs_md               - generate documentation from jsdocs)
+	$(info make docs                  - generate standard JSDocs documentation)
