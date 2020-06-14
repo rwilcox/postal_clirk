@@ -1,6 +1,11 @@
 #!/usr/bin/env node
 
-// original code based on: https://stackoverflow.com/a/46674062/224334
+/**
+ * Module / interface for Postal Clirk
+ * 
+ * original code based on: https://stackoverflow.com/a/46674062/224334
+ * @module PostalClirk
+ */
 
 const console = require('console')
 const process = require('process')
