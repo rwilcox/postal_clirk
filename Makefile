@@ -14,6 +14,8 @@ release:
 
 docs:
 	npm run jsdocs -- -d docs src/main -R README.md
+
+docs_md:
 	npm run doxdox -- src/main/*.js --layout markdown --output jsdocs_md/postal_clirk.md
 
 build: docs
