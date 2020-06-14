@@ -1,10 +1,12 @@
 {
   "name": "postal_clirk",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Run individual Postman requests. Just do not get too clever.",
-  "main": "index.js",
+  "main": "src/main/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "jsdocs": "jsdoc",
+    "doxdox": "doxdox"
   },
   "author": "Ryan Wilcox <rwilcox@wilcoxd.com>",
   "license": "MIT",
@@ -24,8 +26,12 @@
     "url": "https://github.com/rwilcox/postal_clirk.git"
   },
   "homepage": "https://github.com/rwilcox/postal_clirk",
-  "bin": "./index.js",
+  "bin": "./src/main/index.js",
   "files": [
     "README.md"
-  ]
+  ],
+  "devDependencies": {
+    "doxdox": "^3.0.0",
+    "jsdoc": "^3.6.4"
+  }
 }

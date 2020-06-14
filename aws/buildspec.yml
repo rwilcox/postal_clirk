@@ -5,4 +5,5 @@ phases:
       - npm install
   build:
     commands:
+      - make test
       - make build
