@@ -2,15 +2,21 @@ PROJECT ?= postal-clirk
 PROFILE ?= wdstatic
 AWS_STREAM_NAME ?= /aws/codebuild/postal-clirk
 
+clean:
+	rm -rf docs
+	rm jsdocs_md/postal_clirk.md
+
 release:
 	node build-scripts/check-for-currently-published.js
 	npm publish
 	VERSION_TAG=$$(cat package.json | jq -M ".version" | tr -d '\"'); \
 	git tag -m "$$VERSION_TAG" v$$VERSION_TAG
 
-
-build:
+docs:
 	npm run jsdocs -- -d docs src/main -R README.md
+	npm run doxdox -- src/main/*.js --layout markdown --output jsdocs_md/postal_clirk.md
+
+build: docs
 	npm build
 
 

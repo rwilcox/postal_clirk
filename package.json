@@ -5,7 +5,8 @@
   "main": "src/main/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "jsdocs": "jsdoc"
+    "jsdocs": "jsdoc",
+    "doxdox": "doxdox"
   },
   "author": "Ryan Wilcox <rwilcox@wilcoxd.com>",
   "license": "MIT",
@@ -30,6 +31,7 @@
     "README.md"
   ],
   "devDependencies": {
+    "doxdox": "^3.0.0",
     "jsdoc": "^3.6.4"
   }
 }
