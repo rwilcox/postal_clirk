@@ -66,7 +66,7 @@ Given the string path version of the request location, find the Postman request 
 ##### Returns
 
 
-- `Void`
+- `PostmanRequest`  request found
 
 
 
@@ -89,7 +89,7 @@ Given a path to a Postman collection, return its requests
 ##### Returns
 
 
-- `Void`
+- `Array.&lt;PostmanRequest&gt;`  array of requests in the exported Postman collection
 
 
 
@@ -158,7 +158,7 @@ From a JSON string, parse it as a Postman collection
 ##### Returns
 
 
-- `Void`
+- `Array.&lt;PostmanRequest&gt;`  an array of the results found, regardless of where in the Postman hierarchy they were created.
 
 
 
@@ -181,7 +181,7 @@ Transform an array of PostmanVariables into a Plain Ol' Javascript Object
 ##### Returns
 
 
-- `Void`
+- `object`  array of PostmanVariables now transformed to seperate keys in a single object
 
 
 
