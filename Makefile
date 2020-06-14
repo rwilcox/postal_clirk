@@ -11,6 +11,7 @@ release:
 	npm publish
 	VERSION_TAG=$$(cat package.json | jq -M ".version" | tr -d '\"'); \
 	git tag -m "$$VERSION_TAG" v$$VERSION_TAG
+	git push origin --tags
 
 docs:
 	npm run jsdocs -- -d docs src/main -R README.md
